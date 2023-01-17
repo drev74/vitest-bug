@@ -1,25 +1,29 @@
 import { mount } from '@vue/test-utils';
 import { installQuasar } from '@quasar/quasar-app-extension-testing-unit-vitest';
-import { qLayoutInjections } from './injections';
+import { Notify } from 'quasar';
 
 import Dummy from 'src/components/Dummy.vue';
 
-installQuasar();
+installQuasar({ plugins: { Notify } });
+
+function factory() {
+  return mount(Dummy, {});
+}
 
 describe('Dummy Component', () => {
-  it('Trigger a button', async () => {
-    const wrap = mount(Dummy, {
-      global: {
-        provide: qLayoutInjections(),
-        mocks: {
-          $q: {
-            notify: vi.fn(),
-          },
-        },
-      },
-    });
+  it('should call notify on submit', async () => {
+    expect(Dummy).toBeTruthy();
 
-    await wrap.get('[data-test=form-top]').trigger('submit');
-    console.log(wrap.emitted());
+    const wrap = factory();
+    const spy = vi.spyOn(wrap.vm.$q, 'notify');
+    console.log(wrap.html());
+
+    const formInput = wrap.get('[data-test=form-top]');
+
+    expect(spy).not.toHaveBeenCalled();
+    await formInput.trigger('submit');
+    // console.log(wrap.emitted());
+
+    expect(spy).toHaveBeenCalled();
   });
 });

@@ -25,6 +25,7 @@ import { useQuasar } from 'quasar';
 import { ref } from 'vue';
 
 const $q = useQuasar();
+const emit = defineEmits(['myevent']);
 
 const confirm = ref(true);
 
@@ -55,6 +56,7 @@ function onReset() {
 }
 
 function doAction() {
-  console.log('doAction called');
+  console.log('*** doAction called');
+  emit('myevent', 'hello');
 }
 </script>
